@@ -18,18 +18,47 @@ public class ArbolBinario<T extends  Comparable<T>> {
         raiz = eliminarRecursivo(raiz, valor);
     }
 
-    private Nodo<T> insertarRecursivo(Nodo<T> nodo, T valor){
-        if(nodo == null){
-            return NodoFactory.crearNodo(valor);
+    /*private Nodo<T> insertarRecursivo(Nodo<T> nodo, T valor) {
+        if (nodo == null) {
+            return new Nodo<>(valor);
         }
 
-        if(valor.compareTo(nodo.valor) < 0){
+        if (((Comparable<T>) valor).compareTo(nodo.valor) < 0) {
             nodo.izquierda = insertarRecursivo(nodo.izquierda, valor);
-        }else if (valor.compareTo(nodo.valor) > 0){
+        } else if (((Comparable<T>) valor).compareTo(nodo.valor) > 0) {
             nodo.derecha = insertarRecursivo(nodo.derecha, valor);
         }
 
         return nodo;
+    }*/
+
+    private Nodo<T> insertarRecursivo(Nodo<T> nodo, T valor) {
+        if (nodo == null) {
+            return NodoFactory.crearNodo(valor);
+        }
+
+        // Si son numéricos, comparar como números
+        if (esNumerico(valor.toString()) && esNumerico(nodo.valor.toString())) {
+            int numValor = Integer.parseInt(valor.toString());
+            int numNodo = Integer.parseInt(nodo.valor.toString());
+            if (numValor < numNodo) {
+                nodo.izquierda = insertarRecursivo(nodo.izquierda, valor);
+            } else if (numValor > numNodo) {
+                nodo.derecha = insertarRecursivo(nodo.derecha, valor);
+            }
+        } else {
+            // Comparación normal (Strings)
+            if (valor.compareTo(nodo.valor) < 0) {
+                nodo.izquierda = insertarRecursivo(nodo.izquierda, valor);
+            } else if (valor.compareTo(nodo.valor) > 0) {
+                nodo.derecha = insertarRecursivo(nodo.derecha, valor);
+            }
+        }
+        return nodo;
+    }
+
+    private boolean esNumerico(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
     }
 
     private Nodo<T> eliminarRecursivo(Nodo<T> nodo, T valor){
