@@ -36,8 +36,8 @@ public class ArbolBinarioApp extends Application {
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
 
-        // Estilo CSS moderno
-        String css = """
+        // CSS
+        /*String css = """
             .menu-bar {
                 -fx-background-color: #4a6fa5;
                 -fx-text-fill: white;
@@ -48,7 +48,7 @@ public class ArbolBinarioApp extends Application {
             .menu-item:hover {
                 -fx-background-color: #dbe2ef;
             }
-            """;
+            """;*/
 
         MenuBar menuBar = new MenuBar();
         Menu menuOpciones = new Menu("Opciones");
@@ -78,7 +78,7 @@ public class ArbolBinarioApp extends Application {
         });
 
         Scene scene = new Scene(root, 1080, 800);
-        scene.getStylesheets().add("data:text/css," + css);
+        //scene.getStylesheets().add("data:text/css," + css);
         primaryStage.setTitle("Árbol Binario - Visualización Moderna");
         primaryStage.setScene(scene);
         primaryStage.show();
