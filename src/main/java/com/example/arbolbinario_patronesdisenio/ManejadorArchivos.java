@@ -1,8 +1,6 @@
 package com.example.arbolbinario_patronesdisenio;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,5 +33,18 @@ public class ManejadorArchivos {
             }
         }
         return true;
+    }
+
+    public static <T> void exportarRecorrido(String tipoRecorrido, List<T> valores){
+        String rutaArchivo = tipoRecorrido + ".txt";
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(rutaArchivo))){
+            writer.write(tipoRecorrido);
+            writer.newLine();
+            writer.write(String.join(", ", valores.toString().replaceAll("[\\[\\]]", "")));
+            System.out.println("Recorrido exportado a " + rutaArchivo);
+        }catch(IOException e){
+            System.out.println("Error al exportar el archivo: " + e.getMessage());
+        }
     }
 }

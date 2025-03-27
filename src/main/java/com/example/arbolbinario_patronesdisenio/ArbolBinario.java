@@ -1,5 +1,8 @@
 package com.example.arbolbinario_patronesdisenio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ArbolBinario<T extends  Comparable<T>> {
     Nodo<T> raiz;
 
@@ -70,4 +73,17 @@ public class ArbolBinario<T extends  Comparable<T>> {
     public void recorrer(EstrategiaRecorrido<T> estrategiaRecorrido){
         estrategiaRecorrido.recorrer(raiz);
     }
+
+    public List<T> obtenerValoresRecorrido(EstrategiaRecorrido<T> estrategia) {
+        List<T> valores = new ArrayList<>();
+        recorrerYGuardar(raiz, estrategia, valores);
+        return valores;
+    }
+
+    private void recorrerYGuardar(Nodo<T> nodo, EstrategiaRecorrido<T> estrategia, List<T> valores) {
+        if (nodo != null) {
+            estrategia.recorrerYGuardar(nodo, valores);
+        }
+    }
+
 }
