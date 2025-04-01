@@ -38,10 +38,11 @@ public class ArbolBinarioApp extends Application {
         Menu menuOpciones = new Menu("Opciones");
         MenuItem cargarArchivo = new MenuItem("Cargar Archivo");
         MenuItem insertarValor = new MenuItem("Insertar Valor");
+        MenuItem eliminarNodo = new MenuItem("Eliminar nodo");
         MenuItem seleccionarRecorrido = new MenuItem("Seleccionar Recorrido");
         MenuItem exportarRecorrido = new MenuItem("Exportar Recorrido");
 
-        menuOpciones.getItems().addAll(cargarArchivo, insertarValor, seleccionarRecorrido, exportarRecorrido);
+        menuOpciones.getItems().addAll(cargarArchivo, insertarValor, eliminarNodo, seleccionarRecorrido, exportarRecorrido);
         menuBar.getMenus().add(menuOpciones);
         root.setTop(menuBar);
 
@@ -51,13 +52,32 @@ public class ArbolBinarioApp extends Application {
         // Configurar eventos
         cargarArchivo.setOnAction(e -> cargarDesdeArchivo());
         insertarValor.setOnAction(e -> insertarValor());
+        eliminarNodo.setOnAction(e -> eliminarValor());
         seleccionarRecorrido.setOnAction(e -> seleccionarRecorrido());
         exportarRecorrido.setOnAction(e -> exportarRecorrido());
 
         Scene scene = new Scene(root, 1080, 800);
-        primaryStage.setTitle("Árbol Binario - Visualización Moderna");
+        primaryStage.setTitle("Árbol Binario - Programación III UMG");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void eliminarValor() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Eliminar Nodo");
+        dialog.setHeaderText("Ingrese el valor el nodo a eliminar");
+        dialog.setContentText("Valor:");
+
+        dialog.showAndWait().ifPresent(valor -> {
+            if (valor.isEmpty()){
+                mostrarAlerta("Error", "Debe ingresar un valor.");
+                return;
+            }
+
+            arbol.eliminar(valor);
+            nodoSeleccionado = null;
+            dibujarArbol();
+        });
     }
 
     private void cargarDesdeArchivo() {
