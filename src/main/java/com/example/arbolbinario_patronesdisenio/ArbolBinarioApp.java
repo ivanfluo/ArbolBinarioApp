@@ -124,28 +124,55 @@ public class ArbolBinarioApp extends Application {
         dialog.setContentText("Tipo:");
 
         dialog.showAndWait().ifPresent(tipoRecorrido -> {
-            List<String> valores;
-            EstrategiaRecorrido<String> estrategia;
+            if ("Todos".equals(tipoRecorrido)) {
+                StringBuilder resultado = new StringBuilder();
 
-            if ("PreOrden".equals(tipoRecorrido) || "Todos".equals(tipoRecorrido)) {
-                estrategia = new RecorridoPreOrden<>();
-                valores = arbol.obtenerValoresRecorrido(estrategia);
-                simularRecorrido(valores, "Recorrido PreOrden");
-            }
+                // PreOrden
+                EstrategiaRecorrido<String> estrategia = new RecorridoPreOrden<>();
+                List<String> valores = arbol.obtenerValoresRecorrido(estrategia);
+                resultado.append("Recorrido PreOrden: ").append(String.join(", ", valores)).append("\n");
 
-            if ("InOrden".equals(tipoRecorrido) || "Todos".equals(tipoRecorrido)) {
+                // InOrden
                 estrategia = new RecorridoInOrden<>();
                 valores = arbol.obtenerValoresRecorrido(estrategia);
-                simularRecorrido(valores, "Recorrido InOrden");
-            }
+                resultado.append("Recorrido InOrden: ").append(String.join(", ", valores)).append("\n");
 
-            if ("PostOrden".equals(tipoRecorrido) || "Todos".equals(tipoRecorrido)) {
+                // PostOrden
                 estrategia = new RecorridoPostOrden<>();
                 valores = arbol.obtenerValoresRecorrido(estrategia);
-                simularRecorrido(valores, "Recorrido PostOrden");
+                resultado.append("Recorrido PostOrden: ").append(String.join(", ", valores)).append("\n");
+
+                // Mostrar en una sola ventana
+                Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+                alerta.setTitle("Recorridos del Árbol");
+                alerta.setHeaderText("Resultados de los tres recorridos");
+                alerta.setContentText(resultado.toString());
+                alerta.showAndWait();
+            } else {
+                List<String> valores;
+                EstrategiaRecorrido<String> estrategia;
+
+                if ("PreOrden".equals(tipoRecorrido)) {
+                    estrategia = new RecorridoPreOrden<>();
+                    valores = arbol.obtenerValoresRecorrido(estrategia);
+                    simularRecorrido(valores, "Recorrido PreOrden");
+                }
+
+                if ("InOrden".equals(tipoRecorrido)) {
+                    estrategia = new RecorridoInOrden<>();
+                    valores = arbol.obtenerValoresRecorrido(estrategia);
+                    simularRecorrido(valores, "Recorrido InOrden");
+                }
+
+                if ("PostOrden".equals(tipoRecorrido)) {
+                    estrategia = new RecorridoPostOrden<>();
+                    valores = arbol.obtenerValoresRecorrido(estrategia);
+                    simularRecorrido(valores, "Recorrido PostOrden");
+                }
             }
         });
     }
+
 
     private void simularRecorrido(List<String> valores, String titulo) {
         TextArea textArea = new TextArea();
