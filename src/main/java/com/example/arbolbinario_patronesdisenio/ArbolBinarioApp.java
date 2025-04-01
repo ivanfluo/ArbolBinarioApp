@@ -1,17 +1,15 @@
 package com.example.arbolbinario_patronesdisenio;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,7 +23,7 @@ import java.util.List;
 public class ArbolBinarioApp extends Application {
 
     private ArbolBinario<String> arbol = new ArbolBinario<>();
-    private Canvas canvas;
+    private Pane pane;
     private String nodoSeleccionado = null;
 
     public static void main(String[] args) {
@@ -35,20 +33,6 @@ public class ArbolBinarioApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
-
-        // CSS
-        /*String css = """
-            .menu-bar {
-                -fx-background-color: #4a6fa5;
-                -fx-text-fill: white;
-            }
-            .menu-item {
-                -fx-background-color: #f5f7fa;
-            }
-            .menu-item:hover {
-                -fx-background-color: #dbe2ef;
-            }
-            """;*/
 
         MenuBar menuBar = new MenuBar();
         Menu menuOpciones = new Menu("Opciones");
@@ -61,8 +45,8 @@ public class ArbolBinarioApp extends Application {
         menuBar.getMenus().add(menuOpciones);
         root.setTop(menuBar);
 
-        canvas = new Canvas(1080, 800);
-        root.setCenter(canvas);
+        pane = new Pane();
+        root.setCenter(pane);
 
         // Configurar eventos
         cargarArchivo.setOnAction(e -> cargarDesdeArchivo());
@@ -70,21 +54,10 @@ public class ArbolBinarioApp extends Application {
         seleccionarRecorrido.setOnAction(e -> seleccionarRecorrido());
         exportarRecorrido.setOnAction(e -> exportarRecorrido());
 
-        // Interactividad con clics
-        canvas.setOnMouseClicked(e -> {
-            buscarNodoEnPosicion(arbol.raiz, e.getX(), e.getY(),
-                    canvas.getWidth() / 2, 50, canvas.getWidth() / 4);
-            dibujarArbol();
-        });
-
         Scene scene = new Scene(root, 1080, 800);
-        //scene.getStylesheets().add("data:text/css," + css);
         primaryStage.setTitle("Árbol Binario - Visualización Moderna");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        // Tooltip informativo
-        Tooltip.install(canvas, new Tooltip("Haz clic en un nodo para seleccionarlo"));
     }
 
     private void cargarDesdeArchivo() {
@@ -116,18 +89,9 @@ public class ArbolBinarioApp extends Application {
         dialog.setTitle("Insertar Valor");
         dialog.setHeaderText("Ingrese un valor para insertar en el árbol:");
         dialog.setContentText("Valor:");
-        dialog.getDialogPane().setStyle("-fx-background-color: #f5f7fa;");
 
         dialog.showAndWait().ifPresent(valor -> {
             arbol.insertar(valor);
-
-            // Animación de inserción
-            Timeline timeline = new Timeline(
-                    new KeyFrame(Duration.ZERO, new KeyValue(canvas.opacityProperty(), 0.7)),
-                    new KeyFrame(Duration.seconds(0.5), new KeyValue(canvas.opacityProperty(), 1))
-            );
-            timeline.play();
-
             dibujarArbol();
         });
     }
@@ -141,76 +105,44 @@ public class ArbolBinarioApp extends Application {
     }
 
     private void dibujarArbol() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        // Fondo
-        gc.setFill(Color.web("#f5f7fa"));
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        dibujarNodo(gc, arbol.raiz, canvas.getWidth() / 2, 50, canvas.getWidth() / 4);
+        pane.getChildren().clear();
+        dibujarNodo(arbol.raiz, pane.getWidth() / 2, 50, pane.getWidth() / 4);
     }
 
-    private void dibujarNodo(GraphicsContext gc, Nodo<String> nodo, double x, double y, double offset) {
+    private void dibujarNodo(Nodo<String> nodo, double x, double y, double offset) {
         if (nodo == null) return;
 
-        // Resaltar si está seleccionado
-        if (nodo.valor.equals(nodoSeleccionado)) {
-            gc.setFill(Color.web("#e74c3c"));
-        } else {
-            gc.setFill(Color.web("#4a6fa5"));
-        }
-
-        // Dibujar nodo
-        gc.fillOval(x - 20, y - 20, 40, 40);
-        gc.setStroke(Color.web("#2c3e50"));
-        gc.setLineWidth(2);
-        gc.strokeOval(x - 20, y - 20, 40, 40);
-
-        // Texto del nodo centrado
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-
-        // Centrar texto mejor en círculo
-        double textWidth = nodo.valor.length() * gc.getFont().getSize() / 3;
-        double textX = x - textWidth / 2;
-        double textY = y + 5;
-        gc.fillText(nodo.valor, textX, textY);
-
-        // Conexiones
         if (nodo.izquierda != null) {
-            gc.setStroke(Color.web("#7f8c8d"));
-            gc.setLineWidth(1.5);
-            gc.strokeLine(x, y + 20, x - offset, y + 50 - 20);
-            dibujarNodo(gc, nodo.izquierda, x - offset, y + 50, offset / 2);
+            Line lineaIzquierda = new Line(x, y, x - offset, y + 50);
+            lineaIzquierda.setStroke(Color.GRAY);
+            pane.getChildren().add(lineaIzquierda);
+            dibujarNodo(nodo.izquierda, x - offset, y + 50, offset / 2);
         }
+
         if (nodo.derecha != null) {
-            gc.setStroke(Color.web("#7f8c8d"));
-            gc.setLineWidth(1.5);
-            gc.strokeLine(x, y + 20, x + offset, y + 50 - 20);
-            dibujarNodo(gc, nodo.derecha, x + offset, y + 50, offset / 2);
+            Line lineaDerecha = new Line(x, y, x + offset, y + 50);
+            lineaDerecha.setStroke(Color.GRAY);
+            pane.getChildren().add(lineaDerecha);
+            dibujarNodo(nodo.derecha, x + offset, y + 50, offset / 2);
         }
-    }
 
-    private void buscarNodoEnPosicion(Nodo<String> nodo, double targetX, double targetY,
-                                      double x, double y, double offset) {
-        if (nodo == null) return;
+        Circle circulo = new Circle(x, y, 20, nodo.valor.equals(nodoSeleccionado) ? Color.RED : Color.BLUE);
+        circulo.setStroke(Color.BLACK);
 
-        // Verificar si el clic está dentro del área del nodo
-        if (targetX >= x - 25 && targetX <= x + 25 &&
-                targetY >= y - 20 && targetY <= y + 20) {
+        Text texto = new Text(x - 5, y + 5, nodo.valor);
+        texto.setFill(Color.WHITE);
+
+        circulo.setOnMouseClicked(e -> {
             nodoSeleccionado = nodo.valor;
-            return;
-        }
+            dibujarArbol();
+        });
 
-        // Buscar en los hijos
-        if (nodo.izquierda != null) {
-            buscarNodoEnPosicion(nodo.izquierda, targetX, targetY,
-                    x - offset, y + 50, offset / 2);
-        }
-        if (nodo.derecha != null) {
-            buscarNodoEnPosicion(nodo.derecha, targetX, targetY,
-                    x + offset, y + 50, offset / 2);
-        }
+        FadeTransition fade = new FadeTransition(Duration.seconds(0.5), circulo);
+        fade.setFromValue(0.5);
+        fade.setToValue(1);
+        fade.play();
+
+        pane.getChildren().addAll(circulo, texto);
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
