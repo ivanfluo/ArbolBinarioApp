@@ -37,13 +37,14 @@ public class ArbolBinarioApp extends Application {
 
         MenuBar menuBar = new MenuBar();
         Menu menuOpciones = new Menu("Opciones");
-        MenuItem cargarArchivo = new MenuItem("Cargar Archivo");
-        MenuItem insertarValor = new MenuItem("Insertar Valor");
+        MenuItem cargarArchivo = new MenuItem("Cargar archivo");
+        MenuItem insertarValor = new MenuItem("Insertar valor");
         MenuItem eliminarNodo = new MenuItem("Eliminar nodo");
-        MenuItem ejecutarRecorrido = new MenuItem("Ejecutar Recorrido");
-        MenuItem exportarRecorrido = new MenuItem("Exportar Recorrido");
+        MenuItem buscarNodo = new MenuItem("Buscar nodo");
+        MenuItem ejecutarRecorrido = new MenuItem("Ejecutar recorrido");
+        MenuItem exportarRecorrido = new MenuItem("Exportar recorrido");
 
-        menuOpciones.getItems().addAll(cargarArchivo, insertarValor, eliminarNodo, ejecutarRecorrido, exportarRecorrido);
+        menuOpciones.getItems().addAll(cargarArchivo, insertarValor, eliminarNodo, buscarNodo, ejecutarRecorrido, exportarRecorrido);
         menuBar.getMenus().add(menuOpciones);
         root.setTop(menuBar);
 
@@ -54,6 +55,7 @@ public class ArbolBinarioApp extends Application {
         cargarArchivo.setOnAction(e -> cargarDesdeArchivo());
         insertarValor.setOnAction(e -> insertarValor());
         eliminarNodo.setOnAction(e -> eliminarValor());
+        buscarNodo.setOnAction(e -> buscarNodo());
         ejecutarRecorrido.setOnAction(e -> ejecutarRecorrido());
         exportarRecorrido.setOnAction(e -> exportarRecorrido());
 
@@ -142,7 +144,7 @@ public class ArbolBinarioApp extends Application {
                 valores = arbol.obtenerValoresRecorrido(estrategia);
                 resultado.append("Recorrido PostOrden: ").append(String.join(", ", valores)).append("\n");
 
-                // Mostrar en una sola ventana
+                // Mostramos en una sola ventana el recorrido al seleccionar TODOS
                 Alert alerta = new Alert(Alert.AlertType.INFORMATION);
                 alerta.setTitle("Recorridos del Árbol");
                 alerta.setHeaderText("Resultados de los tres recorridos");
@@ -279,4 +281,26 @@ public class ArbolBinarioApp extends Application {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+
+    private void buscarNodo() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Buscar Nodo");
+        dialog.setHeaderText("Ingrese el valor del nodo a buscar:");
+        dialog.setContentText("Valor:");
+
+        dialog.showAndWait().ifPresent(valor -> {
+            int altura = arbol.buscarAlturaNodo(valor);
+
+            String mensaje = (altura == -1)
+                    ? "El nodo no existe en el árbol."
+                    : "El nodo " + valor + " está en la altura " + altura;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Resultado de Búsqueda");
+            alert.setHeaderText(null);
+            alert.setContentText(mensaje);
+            alert.show();
+        });
+    }
+
 }

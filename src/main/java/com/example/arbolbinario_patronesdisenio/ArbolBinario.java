@@ -101,4 +101,26 @@ public class ArbolBinario<T extends  Comparable<T>> {
         }
     }
 
+    public int buscarAlturaNodo(T valor){
+        return buscarAlturaNodo(raiz, valor, 1);
+    }
+
+    private int buscarAlturaNodo(Nodo<T> nodo, T valor, int altura) {
+        if (nodo == null) {
+            return -1;
+        }
+
+        if (nodo.valor.equals(valor)) {
+            return altura;
+        }
+
+        // Busqueda en subárbol izquierdo
+        int alturaIzquierda = buscarAlturaNodo(nodo.izquierda, valor, altura + 1);
+        if (alturaIzquierda != -1) {
+            return alturaIzquierda;
+        }
+
+        return buscarAlturaNodo(nodo.derecha, valor, altura + 1);
+    }
+
 }
