@@ -18,20 +18,6 @@ public class ArbolBinario<T extends  Comparable<T>> {
         raiz = eliminarRecursivo(raiz, valor);
     }
 
-    /*private Nodo<T> insertarRecursivo(Nodo<T> nodo, T valor) {
-        if (nodo == null) {
-            return new Nodo<>(valor);
-        }
-
-        if (((Comparable<T>) valor).compareTo(nodo.valor) < 0) {
-            nodo.izquierda = insertarRecursivo(nodo.izquierda, valor);
-        } else if (((Comparable<T>) valor).compareTo(nodo.valor) > 0) {
-            nodo.derecha = insertarRecursivo(nodo.derecha, valor);
-        }
-
-        return nodo;
-    }*/
-
     private Nodo<T> insertarRecursivo(Nodo<T> nodo, T valor) {
         if (nodo == null) {
             return NodoFactory.crearNodo(valor);
